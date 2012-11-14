@@ -640,6 +640,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected void handleStyledAttributes(TypedArray a) {
 	}
 
+	protected void handleStickyHeaderStyleAttribute(TypedArray a) {
+	}
+	
+	
 	/**
 	 * Implemented by derived class to return whether the View is in a mState
 	 * where the user can Pull to Refresh by scrolling down.
@@ -825,6 +829,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// Styleables from XML
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
+		handleStickyHeaderStyleAttribute(a);
+		
 		if (a.hasValue(R.styleable.PullToRefresh_ptrMode)) {
 			mMode = Mode.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
 		}
@@ -859,10 +865,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		// Let the derivative classes have a go at handling attributes, then
-		// recycle them...
 		handleStyledAttributes(a);
+		// recycle them...
 		a.recycle();
-
+		
 		// Finally update the UI for the modes
 		updateUIForMode();
 	}

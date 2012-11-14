@@ -32,6 +32,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 
+import com.emilsjolander.components.StickyListHeaders.StickyListHeadersListView;
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.IndicatorLayout;
 
@@ -48,6 +49,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	private boolean mShowIndicator;
 	private boolean mScrollEmptyView = true;
+	protected boolean useStickyHeader;
 
 	public PullToRefreshAdapterViewBase(Context context) {
 		super(context);
@@ -254,6 +256,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	void onReleaseToRefresh() {
 		super.onReleaseToRefresh();
 
+		//remove sticky header on pull to refresh
+		if(useStickyHeader && mRefreshableView instanceof StickyListHeadersListView)
+			((StickyListHeadersListView) mRefreshableView).resetHeader();
+		
 		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
 				case PULL_UP_TO_REFRESH:
@@ -279,6 +285,11 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected void handleStyledAttributes(TypedArray a) {
 		// Set Show Indicator to the XML value, or default value
 		mShowIndicator = a.getBoolean(R.styleable.PullToRefresh_ptrShowIndicator, !isPullToRefreshOverScrollEnabled());
+	}
+	
+	@Override
+	protected void handleStickyHeaderStyleAttribute(TypedArray a) {
+		useStickyHeader = a.getBoolean(R.styleable.PullToRefresh_useStickyHeader, false);
 	}
 
 	protected boolean isReadyForPullDown() {

@@ -2,6 +2,7 @@
 <resources>
 
     <declare-styleable name="PullToRefresh">
+        <attr name="useStickyHeader" format="boolean" />
         <attr name="ptrAdapterViewBackground" format="reference|color" />
         <attr name="ptrHeaderBackground" format="reference|color" />
         <attr name="ptrHeaderTextColor" format="reference|color" />

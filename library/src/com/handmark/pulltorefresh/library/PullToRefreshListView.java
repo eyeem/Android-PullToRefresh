@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.emilsjolander.components.StickyListHeaders.StickyListHeadersListView;
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
@@ -226,17 +227,28 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	protected ListView createListView(Context context, AttributeSet attrs) {
 		final ListView lv;
-		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
-			lv = new InternalListViewSDK9(context, attrs);
-		} else {
-			lv = new InternalListView(context, attrs);
+		
+		if(useStickyHeader)
+			lv = new InternalStickyHeaderListView(context, attrs);
+		else{
+			if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
+				lv = new InternalListViewSDK9(context, attrs);
+			}else{
+				lv = new InternalListView(context, attrs);
+			}
 		}
+				
 		return lv;
 	}
 
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = createListView(context, attrs);
+		ListView lv = null;
+		
+		if(useStickyHeader)
+			lv = new InternalStickyHeaderListView(context, attrs);
+		else
+			lv = new InternalListView(context, attrs);
 
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
@@ -329,6 +341,54 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			super.setEmptyView(emptyView);
 		}
 
+	}
+	
+	class InternalStickyHeaderListView extends StickyListHeadersListView implements EmptyViewMethodAccessor {
+
+		private boolean mAddedLvFooter = false;
+
+		public InternalStickyHeaderListView(Context context, AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		@Override
+		public void draw(Canvas canvas) {
+			/**
+			 * This is a bit hacky, but ListView has got a bug in it when using
+			 * Header/Footer Views and the list is empty. This masks the issue
+			 * so that it doesn't cause an FC. See Issue #66.
+			 */
+			try {
+				super.draw(canvas);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public ContextMenuInfo getContextMenuInfo() {
+			return super.getContextMenuInfo();
+		}
+
+		@Override
+		public void setAdapter(ListAdapter adapter) {
+			// Add the Footer View at the last possible moment
+			if (!mAddedLvFooter) {
+				addFooterView(mLvFooterLoadingFrame, null, false);
+				mAddedLvFooter = true;
+			}
+
+			super.setAdapter(adapter);
+		}
+
+		@Override
+		public void setEmptyView(View emptyView) {
+			PullToRefreshListView.this.setEmptyView(emptyView);
+		}
+
+		@Override
+		public void setEmptyViewInternal(View emptyView) {
+			super.setEmptyView(emptyView);
+		}
 	}
 
 }

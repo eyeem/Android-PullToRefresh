@@ -456,10 +456,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
-			mHeaderLayout.setRefreshingLabel(refreshingLabel);
+			mHeaderLayout.setRefreshingLabel(refreshingLabel, isRefreshing());
 		}
 		if (null != mFooterLayout && mode.canPullUp()) {
-			mFooterLayout.setRefreshingLabel(refreshingLabel);
+			mFooterLayout.setRefreshingLabel(refreshingLabel, isRefreshing());
 		}
 	}
 

@@ -203,8 +203,11 @@ public abstract class LoadingLayout extends LinearLayout {
 		mPullLabel = pullLabel;
 	}
 
-	public void setRefreshingLabel(CharSequence refreshingLabel) {
+	public void setRefreshingLabel(CharSequence refreshingLabel, boolean isRefreshing) {
 		mRefreshingLabel = refreshingLabel;
+		if (isRefreshing) {
+		   mHeaderText.setText(mRefreshingLabel);
+		}
 	}
 
 	public void setReleaseLabel(CharSequence releaseLabel) {

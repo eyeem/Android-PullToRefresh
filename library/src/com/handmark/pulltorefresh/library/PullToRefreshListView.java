@@ -99,10 +99,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		super.setRefreshingLabel(refreshingLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
-			mHeaderLoadingView.setRefreshingLabel(refreshingLabel);
+			mHeaderLoadingView.setRefreshingLabel(refreshingLabel, isRefreshing());
 		}
 		if (null != mFooterLoadingView && mode.canPullUp()) {
-			mFooterLoadingView.setRefreshingLabel(refreshingLabel);
+			mFooterLoadingView.setRefreshingLabel(refreshingLabel, isRefreshing());
 		}
 	}
 
